@@ -14,6 +14,7 @@ public class MainActivity extends Activity {
         TouchCircle touchCircle = new TouchCircle(this);
         setContentView(touchCircle);
         //setContentView(R.layout.activity_main);
+        
     }
 
     @Override
