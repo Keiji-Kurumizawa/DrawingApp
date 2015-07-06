@@ -4,21 +4,33 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity
+{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TouchCircle touchCircle = new TouchCircle(this);
-        setContentView(touchCircle);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
+        Button back_btn = (Button)findViewById(R.id.back_button);
+        Button advance_btn = (Button)findViewById(R.id.advance_button);
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TouchCircle tcl = new TouchCircle(getApplicationContext());
+                tcl.onBackButton();
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        //super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
