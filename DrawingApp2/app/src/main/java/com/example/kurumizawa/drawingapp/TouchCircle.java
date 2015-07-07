@@ -22,22 +22,34 @@ public class TouchCircle extends View {
     private float posx = 0.0f;  //タッチした場所のx座標
     private float posy = 0.0f;  //タッチした芭蕉のy座標
     private Path path = null;   //パス
-    private boolean viewFlag;
+    private boolean backFlag;
+    private boolean nextFlag;
     private int listpotision;
+    private int nextpotision;
     private final Handler handler = new Handler();
-    ArrayList<Path> draw_list = new ArrayList<Path>();  //パスの保存配列
+    ArrayList<Path> draw_list = new ArrayList<Path>();  //パスの配列
+    ArrayList<Path> save_draw_list = new ArrayList<Path>(); //パスの保存配列
 
     public TouchCircle(Context context, AttributeSet attr)
     {
         super(context, attr);
-        viewFlag = true;
+        backFlag = false;
+        nextFlag = false;
         listpotision = 0;
+        nextpotision = 0;
     }
 
     //戻るボタン
     public void onBackButton(boolean flg)
     {
-        viewFlag = flg;
+        backFlag = flg;
+        invalidate();
+    }
+
+    //進むボタン
+    public void onNextButton(boolean flg)
+    {
+        nextFlag = flg;
         invalidate();
     }
 
@@ -63,6 +75,7 @@ public class TouchCircle extends View {
         {
             Path pt = draw_list.get(i);
             canvas.drawPath(pt, paint);
+            Log.e("VIEW", "onDraw:"+pt);
         }
         //線の描画
         if(path != null)
@@ -71,17 +84,40 @@ public class TouchCircle extends View {
         }
 
         //戻る機能
-        if(viewFlag == false)
+        if(backFlag == true)
         {
-            if(listpotision > 0) {
-                //int k = draw_list.size() - 1;
+            if(listpotision > 0)
+            {
                 Path pt = draw_list.get(listpotision-1);
-                draw_list.remove(pt);
+                Path spt = new Path(pt);
+                Log.e("HOGE","back b:"+spt.isEmpty()+":"+pt.isEmpty()+":"+pt);
                 pt.reset();
+                Log.e("HOGE", "back a:" + spt.isEmpty()+":"+spt.isEmpty()+":"+spt);
+                save_draw_list.add(spt);
+                nextpotision++;
+                draw_list.remove(pt);
                 invalidate();
                 listpotision--;
             }
-            viewFlag = true;
+            backFlag = false;
+        }
+
+        //進む機能
+        if(nextFlag == true)
+        {
+            if (nextpotision > 0)
+            {
+                Path pt = save_draw_list.get(nextpotision-1);
+                Path spt = new Path(pt);
+                Log.e("HOGE", "next:" + pt.isEmpty()+":"+pt);
+                draw_list.add(pt);
+                listpotision++;
+                save_draw_list.remove(pt);
+                Log.e("HOGE", "next:"+spt.isEmpty()+":"+spt);
+                invalidate();
+                nextpotision--;
+            }
+            nextFlag = false;
         }
     }
 

@@ -17,13 +17,20 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
 
         Button back_btn = (Button)findViewById(R.id.back_button);
-        Button advance_btn = (Button)findViewById(R.id.advance_button);
+        Button next_btn = (Button)findViewById(R.id.advance_button);
         final TouchCircle tcl = (TouchCircle)findViewById(R.id.view);
 
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tcl.onBackButton(false);
+                tcl.onBackButton(true);
+            }
+        });
+
+        next_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tcl.onNextButton(true);
             }
         });
     }
