@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.util.AttributeSet;
@@ -13,27 +15,35 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.jar.Attributes;
+import android.os.Handler;
 
 public class TouchCircle extends View {
 
     private float posx = 0.0f;  //タッチした場所のx座標
     private float posy = 0.0f;  //タッチした芭蕉のy座標
     private Path path = null;   //パス
-    private Canvas cav;
-    private Paint pai;
+    private boolean viewFlag;
+    private int listpotision;
+    private final Handler handler = new Handler();
     ArrayList<Path> draw_list = new ArrayList<Path>();  //パスの保存配列
 
-    public TouchCircle(Context context)
-    {
-        super(context);
-    }
     public TouchCircle(Context context, AttributeSet attr)
     {
         super(context, attr);
+        viewFlag = true;
+        listpotision = 0;
+    }
+
+    //戻るボタン
+    public void onBackButton(boolean flg)
+    {
+        viewFlag = flg;
+        invalidate();
     }
 
     protected void onDraw(Canvas canvas)
     {
+        Log.e("VIEW","onDraw");
         Paint paint = new Paint();
         //アンチエイリアスの設定
         paint.setAntiAlias(true);
@@ -48,9 +58,6 @@ public class TouchCircle extends View {
         //線の繋ぎ目を丸くする
         paint.setStrokeJoin(Paint.Join.ROUND);
 
-        this.cav = canvas;
-        this.pai = paint;
-
         //リストに保存
         for(int i  = 0; i < draw_list.size(); i++)
         {
@@ -61,6 +68,20 @@ public class TouchCircle extends View {
         if(path != null)
         {
             canvas.drawPath(path, paint);
+        }
+
+        //戻る機能
+        if(viewFlag == false)
+        {
+            if(listpotision > 0) {
+                //int k = draw_list.size() - 1;
+                Path pt = draw_list.get(listpotision-1);
+                draw_list.remove(pt);
+                pt.reset();
+                invalidate();
+                listpotision--;
+            }
+            viewFlag = true;
         }
     }
 
@@ -89,6 +110,7 @@ public class TouchCircle extends View {
             case MotionEvent.ACTION_UP:
                 path.lineTo(e.getX(), e.getY());
                 draw_list.add(path);
+                listpotision++;
                 invalidate();
                 break;
 
@@ -96,18 +118,6 @@ public class TouchCircle extends View {
                 break;
         }
         return true;
-    }
-
-    //戻るボタン押下
-    public void onBackButton()
-    {
-        int i = 0;
-        if(draw_list.size() > 0)
-        {
-            for(i  = 0; i < draw_list.size(); i++);
-            Path pt = draw_list.get(i-1);
-            cav.drawPath(pt, pai);
-        }
     }
 }
 
